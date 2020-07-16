@@ -21,7 +21,7 @@ Add the following alias to your `deps.edn` file:
 ```EDN
   :aliases {:git-info-edn {:extra-deps {noisesmith/lein-git-info-edn {:git/url "https://github.com/noisesmith/lein-git-info-edn.git"
                                                                       :sha "GITHUB_SHA_GOES_HERE"}}
-                           :main-opts ["-m" "leiningen.git-info-edn"]}}
+                           :main-opts ["-m" "noisesmith.git-info"]}}
 ```
 
 then
