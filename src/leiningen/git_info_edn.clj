@@ -1,36 +1,22 @@
+;********************************************************************************
+;* Copyright © 2015 Justin Glenn Smith
+;*
+;* This program and the accompanying materials are made available under the
+;* terms of the Eclipse Public License 1.0 which is available at
+;* http://www.eclipse.org/legal/epl-1.0.
+;*
+;* SPDX-License-Identifier: EPL-1.0
+;*
+;* Contributors:
+;*   Justin Glenn Smith - initial implementation
+;*   Peter Monks        - add deps.edn plugin and restructure code
+;********************************************************************************/
+
 (ns leiningen.git-info-edn
-  (:require [clojure.java.shell :as sh]
-            [clojure.string :as string]
-            [clojure.java.io :as io]
-            [clojure.pprint :as pprint])
-  (:import (java.time Instant)))
-
-(def date-emitter
-  "needed in order to support #inst output in Clojure 1.10.0"
-  (reify Object
-    (toString [this]
-      (str "#inst \"" (Instant/now) "\""))))
-
-(defmethod print-method (class date-emitter) [x p]
-  (.write p (str x)))
-
-(defn generate-info-str
-  []
-  (with-out-str
-   (pprint/pprint {:hash (string/trim (:out (sh/sh "git" "rev-parse" "HEAD")))
-                   :status (string/trim (:out (sh/sh "git" "status")))
-                   :date date-emitter})))
+  (:require [noisesmith.git-info :as gi]))
 
 (defn git-info-edn
-  "adds git info to the resources directory, entry point for the leiningen plugin"
+  "Entry point for the leiningen plugin"
   [& _]
-  (let [output-file "resources/deploy-info.edn"]
-    (io/make-parents output-file)
-    (spit output-file (generate-info-str)))
+  (gi/git-info-edn "resources/deploy-info.edn")
   true)
-
-(defn -main
-  "entry point for the tools.deps plugin"
-  [& source-paths]
-  (git-info-edn)
-  (System/exit 0))
